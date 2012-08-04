@@ -10,7 +10,29 @@ use MooseX::Types::Moose qw{ ArrayRef Str };
 with 'Dist::Zilla::Role::Releaser';
 with 'Dist::Zilla::Role::Git::Repo';
  
-sub mvp_multivalue_args { qw(push_to) }
+has remote => (
+  is => 'ro',
+  isa => 'Str',
+  default => 'heroku',
+);
+
+has branch => (
+  is => 'ro',
+  isa => 'Str',
+  default => 'heroku_release/master',
+);
+
+has stack => (
+  is => 'ro',
+  isa => 'Str',
+  default => 'cedar',
+);
+
+has account => (
+  is => 'ro',
+  isa => 'Str',
+  predicate => 'has_account',
+);
  
 has push_to => (
   is   => 'ro',

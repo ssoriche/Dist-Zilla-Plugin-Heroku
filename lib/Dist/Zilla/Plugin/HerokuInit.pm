@@ -7,46 +7,34 @@ use Try::Tiny;
 
 with 'Dist::Zilla::Role::BeforeRelease';
 
-has config_entries => (
-  is   => 'ro',
-  isa  => 'ArrayRef[Str]',
-  default => sub { [] },
+has remote => (
+  is => 'ro',
+  isa => 'Str',
+  default => 'heroku',
 );
 
-sub mvp_multivalue_args { qw(config_entries remotes) }
-sub mvp_aliases { return { config => 'config_entries', remote => 'remotes' } }
+has branch => (
+  is => 'ro',
+  isa => 'Str',
+  default => 'heroku_release/master',
+);
 
-sub before_release {
-  my $self = shift;
-  my ($opts) = @_;
-  my $git = Git::Wrapper->new($opts->{mint_root});
-  # Make sure there is a git repository
+has stack => (
+  is => 'ro',
+  isa => 'Str',
+  default => 'cedar',
+);
 
-  try {
-    $git->status;
-  }
-  catch {
-    my $error = $_;
-  };
-  # Make sure there isn't a remote called Heroku (or configed to a different name)
-  # Create a new remote for Heroku
-  # Use the buildpack specified in the config to set up Heroku
-    $self->log("Initializing a new git repository in " . $opts->{mint_root});
-    $git->init;
+has buildpack => (
+  is => 'ro',
+  isa => 'Str',
+);
 
-    foreach my $configSpec (@{ $self->config_entries }) {
-      my ($option, $value) = split ' ', _format_string($configSpec, $self), 2;
-      $self->log_debug("Configuring $option $value");
-      $git->config($option, $value);
-    }
+has account => (
+  is => 'ro',
+  isa => 'Str',
+  predicate => 'has_account',
+);
 
-    $git->add($opts->{mint_root});
-    $git->commit({message => _format_string($self->commit_message, $self)});
-    foreach my $remoteSpec (@{ $self->remotes }) {
-      my ($remote, $url) = split ' ', _format_string($remoteSpec, $self), 2;
-      $self->log_debug("Adding remote $remote as $url");
-      $git->remote(add => $remote, $url);
-    }
-}
 
 1;
