@@ -1,4 +1,4 @@
-package Dist::Zilla::Plugin::HerokuInit;
+package Dist::Zilla::Plugin::Heroku::Init;
 
 use strict;
 use warnings;
