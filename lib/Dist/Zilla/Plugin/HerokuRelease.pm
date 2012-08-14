@@ -46,11 +46,9 @@ sub release {
   my $self = shift;
   my $git  = Git::Wrapper->new( $self->repo_root );
 
-  for my $remote ( @{ $self->push_to } ) { 
-    $self->log("pushing to $remote");
-    my @remote = split(/\s+/,$remote);
-    $self->log_debug($_) for $git->push( @remote );
-  }
+  $self->log("pushing to $self->remote");
+  my @remote = split(/\s+/,$self->remote);
+  $self->log_debug($_) for $git->push( @remote );
 }
 
 1;
